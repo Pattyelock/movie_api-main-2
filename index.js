@@ -8,6 +8,8 @@ app.use(morgan("common"));
 // Serve static files from the "public" directory
 app.use(express.static("public"));
 
+//middleware -> logic that runs before or after your endpoints
+
 // Root route at '/'
 app.get("/", (req, res) => {
   res.send("Welcome to My Movie API!");
@@ -28,6 +30,7 @@ const movies = [
 ];
 
 app.get("/movies", (req, res) => {
+  // response -> movies as a json
   res.json(movies);
 });
 
@@ -35,6 +38,7 @@ app.get("/movies", (req, res) => {
 app.get("/error", (req, res) => {
   throw new Error("Test error!");
 });
+
 
 // Error-handling middleware
 app.use((err, req, res, next) => {
