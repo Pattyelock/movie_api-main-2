@@ -7,7 +7,80 @@
   </head>
   <body>
     <h1>Welcome to My Movie API Documentation</h1>
-    <p>Here you will find information about the API...</p>
-    <!-- Add the rest of your content here -->
+    <p>Here you will find information about the API and its endpoints.</p>
+    
+    <h2>API Endpoints</h2>
+    <table border="1">
+      <tr>
+        <th>Request</th>
+        <th>URL Endpoint</th>
+        <th>Description</th>
+        <th>Response</th>
+      </tr>
+      
+      <tr>
+        <td>GET</td>
+        <td>/movies</td>
+        <td>Retrieve a list of all movies</td>
+        <td>Array of movie objects</td>
+      </tr>
+      
+      <tr>
+        <td>GET</td>
+        <td>/movies/:title</td>
+        <td>Retrieve details of a movie by title</td>
+        <td>Movie object</td>
+      </tr>
+      
+      <tr>
+        <td>GET</td>
+        <td>/genres/:name</td>
+        <td>Retrieve genre details by name</td>
+        <td>Genre object</td>
+      </tr>
+      
+      <tr>
+        <td>GET</td>
+        <td>/directors/:name</td>
+        <td>Retrieve director details by name</td>
+        <td>Director object</td>
+      </tr>
+      
+      <tr>
+        <td>POST</td>
+        <td>/users</td>
+        <td>Register a new user</td>
+        <td>Confirmation of registration</td>
+      </tr>
+      
+      <tr>
+        <td>PUT</td>
+        <td>/users/:username</td>
+        <td>Update user information</td>
+        <td>Confirmation of update</td>
+      </tr>
+      
+      <tr>
+        <td>POST</td>
+        <td>/users/:username/favorites/:movieId</td>
+        <td>Add a movie to user’s favorites</td>
+        <td>Confirmation of addition</td>
+      </tr>
+      
+      <tr>
+        <td>DELETE</td>
+        <td>/users/:username/favorites/:movieId</td>
+        <td>Remove a movie from user’s favorites</td>
+        <td>Confirmation of removal</td>
+      </tr>
+      
+      <tr>
+        <td>DELETE</td>
+        <td>/users/:username</td>
+        <td>Deregister user</td>
+        <td>Confirmation of account deletion</td>
+      </tr>
+    </table>
   </body>
 </html>
+
