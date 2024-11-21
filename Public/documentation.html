@@ -8,7 +8,8 @@
   <body>
     <h1>Welcome to My Movie API Documentation</h1>
     <p>Here you will find information about the API and its endpoints.</p>
-    
+    <p><strong>Base URL:</strong> `http://localhost:3000` (or your live API URL)</p>
+
     <h2>API Endpoints</h2>
     <table border="1">
       <tr>
@@ -18,69 +19,158 @@
         <th>Response</th>
       </tr>
       
+      <!-- Get all movies -->
       <tr>
         <td>GET</td>
         <td>/movies</td>
         <td>Retrieve a list of all movies</td>
-        <td>Array of movie objects</td>
+        <td>
+          <pre>
+[
+  {
+    "Title": "Inception",
+    "Description": "A mind-bending thriller where dream infiltration is a reality.",
+    "Genre": { "Name": "Sci-Fi", "Description": "Science fiction" },
+    "Director": { "Name": "Christopher Nolan", "Bio": "English film director, producer, screenwriter." },
+    "Actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"],
+    "ImagePath": "/images/inception.jpg",
+    "Featured": true
+  },
+  ...
+]
+          </pre>
+        </td>
       </tr>
-      
+
+      <!-- Get movie by title -->
       <tr>
         <td>GET</td>
         <td>/movies/:title</td>
-        <td>Retrieve details of a movie by title</td>
-        <td>Movie object</td>
+        <td>Retrieve details of a movie by title (e.g., /movies/Inception)</td>
+        <td>
+          <pre>
+{
+  "Title": "Inception",
+  "Description": "A mind-bending thriller where dream infiltration is a reality.",
+  "Genre": { "Name": "Sci-Fi", "Description": "Science fiction" },
+  "Director": { "Name": "Christopher Nolan", "Bio": "English film director, producer, screenwriter." },
+  "Actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"],
+  "ImagePath": "/images/inception.jpg",
+  "Featured": true
+}
+          </pre>
+        </td>
       </tr>
-      
+
+      <!-- Get genre by name -->
       <tr>
         <td>GET</td>
         <td>/genres/:name</td>
-        <td>Retrieve genre details by name</td>
-        <td>Genre object</td>
+        <td>Retrieve genre details by name (e.g., /genres/Sci-Fi)</td>
+        <td>
+          <pre>
+{
+  "genre": "Sci-Fi",
+  "movies": [
+    {
+      "Title": "Inception",
+      "Description": "A mind-bending thriller where dream infiltration is a reality.",
+      "Director": "Christopher Nolan",
+      "Actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"],
+      "ImagePath": "/images/inception.jpg"
+    }
+  ]
+}
+          </pre>
+        </td>
       </tr>
-      
+
+      <!-- Get director by name -->
       <tr>
         <td>GET</td>
         <td>/directors/:name</td>
-        <td>Retrieve director details by name</td>
-        <td>Director object</td>
+        <td>Retrieve director details by name (e.g., /directors/Christopher Nolan)</td>
+        <td>
+          <pre>
+{
+  "director": "Christopher Nolan",
+  "bio": "English film director, producer, screenwriter.",
+  "birthYear": 1970,
+  "deathYear": null
+}
+          </pre>
+        </td>
       </tr>
-      
+
+      <!-- Register user -->
       <tr>
         <td>POST</td>
         <td>/users</td>
         <td>Register a new user</td>
-        <td>Confirmation of registration</td>
+        <td>
+          <pre>
+{
+  "message": "User newUser123 registered successfully."
+}
+          </pre>
+        </td>
       </tr>
-      
+
+      <!-- Update user -->
       <tr>
         <td>PUT</td>
         <td>/users/:username</td>
         <td>Update user information</td>
-        <td>Confirmation of update</td>
+        <td>
+          <pre>
+{
+  "message": "User newUser123 information updated."
+}
+          </pre>
+        </td>
       </tr>
-      
+
+      <!-- Add movie to favorites -->
       <tr>
         <td>POST</td>
         <td>/users/:username/favorites/:movieId</td>
         <td>Add a movie to user’s favorites</td>
-        <td>Confirmation of addition</td>
+        <td>
+          <pre>
+{
+  "message": "Inception has been added to newUser123's favorites."
+}
+          </pre>
+        </td>
       </tr>
-      
+
+      <!-- Remove movie from favorites -->
       <tr>
         <td>DELETE</td>
         <td>/users/:username/favorites/:movieId</td>
         <td>Remove a movie from user’s favorites</td>
-        <td>Confirmation of removal</td>
+        <td>
+          <pre>
+{
+  "message": "Inception has been removed from newUser123's favorites."
+}
+          </pre>
+        </td>
       </tr>
-      
+
+      <!-- Deregister user -->
       <tr>
         <td>DELETE</td>
         <td>/users/:username</td>
         <td>Deregister user</td>
-        <td>Confirmation of account deletion</td>
+        <td>
+          <pre>
+{
+  "message": "User newUser123 deregistered."
+}
+          </pre>
+        </td>
       </tr>
     </table>
   </body>
 </html>
-
