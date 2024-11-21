@@ -78,6 +78,7 @@ app.get("/directors/:name", async (req, res) => {
 });
 
 // Register a new user
+// Register a new user
 app.post("/users", async (req, res) => {
   try {
     const existingUser = await Users.findOne({ Username: req.body.Username });
@@ -164,6 +165,7 @@ app.delete("/users/:username", async (req, res) => {
     res.status(500).send("Error: " + err);
   }
 });
+
 
 // Error-handling middleware
 app.use((err, req, res, next) => {
