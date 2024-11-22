@@ -3,12 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Documentation</title>
+    <title>API Documentation</title>
   </head>
   <body>
     <h1>Welcome to My Movie API Documentation</h1>
     <p>Here you will find information about the API and its endpoints.</p>
-    <p><strong>Base URL:</strong> `http://localhost:3000` (or your live API URL)</p>
+    <p>
+      <strong>Base URL:</strong> <code>http://localhost:8080</code> (or your
+      live API URL)
+    </p>
 
     <h2>API Endpoints</h2>
     <table border="1">
@@ -18,15 +21,14 @@
         <th>Description</th>
         <th>Response</th>
       </tr>
-      
+
       <!-- Get all movies -->
       <tr>
         <td>GET</td>
-        <td>/movies</td>
+        <td><code>/movies</code></td>
         <td>Retrieve a list of all movies</td>
         <td>
-          <pre>
-[
+          <pre><code>[
   {
     "Title": "Inception",
     "Description": "A mind-bending thriller where dream infiltration is a reality.",
@@ -36,20 +38,30 @@
     "ImagePath": "/images/inception.jpg",
     "Featured": true
   },
-  ...
+  {
+    "Title": "The Dark Knight",
+    "Description": "Batman sets out to dismantle the remaining criminal organizations in Gotham City.",
+    "Genre": { "Name": "Action", "Description": "Action-packed movie" },
+    "Director": { "Name": "Christopher Nolan", "Bio": "English film director, producer, screenwriter." },
+    "Actors": ["Christian Bale", "Heath Ledger", "Aaron Eckhart"],
+    "ImagePath": "/images/dark_knight.jpg",
+    "Featured": true
+  }
 ]
-          </pre>
+        </code></pre>
         </td>
       </tr>
 
       <!-- Get movie by title -->
       <tr>
         <td>GET</td>
-        <td>/movies/:title</td>
-        <td>Retrieve details of a movie by title (e.g., /movies/Inception)</td>
+        <td><code>/movies/:title</code></td>
         <td>
-          <pre>
-{
+          Retrieve details of a movie by title (e.g.,
+          <code>/movies/Inception</code>)
+        </td>
+        <td>
+          <pre><code>{
   "Title": "Inception",
   "Description": "A mind-bending thriller where dream infiltration is a reality.",
   "Genre": { "Name": "Sci-Fi", "Description": "Science fiction" },
@@ -58,18 +70,19 @@
   "ImagePath": "/images/inception.jpg",
   "Featured": true
 }
-          </pre>
+        </code></pre>
         </td>
       </tr>
 
       <!-- Get genre by name -->
       <tr>
         <td>GET</td>
-        <td>/genres/:name</td>
-        <td>Retrieve genre details by name (e.g., /genres/Sci-Fi)</td>
+        <td><code>/genres/:name</code></td>
         <td>
-          <pre>
-{
+          Retrieve genre details by name (e.g., <code>/genres/Sci-Fi</code>)
+        </td>
+        <td>
+          <pre><code>{
   "genre": "Sci-Fi",
   "movies": [
     {
@@ -78,97 +91,35 @@
       "Director": "Christopher Nolan",
       "Actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"],
       "ImagePath": "/images/inception.jpg"
+    },
+    {
+      "Title": "The Matrix",
+      "Description": "A computer hacker learns from mysterious rebels about the true nature of his reality.",
+      "Director": "The Wachowskis",
+      "Actors": ["Keanu Reeves", "Laurence Fishburne", "Carrie-Anne Moss"],
+      "ImagePath": "/images/matrix.jpg"
     }
   ]
 }
-          </pre>
+        </code></pre>
         </td>
       </tr>
 
       <!-- Get director by name -->
       <tr>
         <td>GET</td>
-        <td>/directors/:name</td>
-        <td>Retrieve director details by name (e.g., /directors/Christopher Nolan)</td>
+        <td><code>/directors/:name</code></td>
         <td>
-          <pre>
-{
-  "director": "Christopher Nolan",
-  "bio": "English film director, producer, screenwriter.",
-  "birthYear": 1970,
-  "deathYear": null
-}
-          </pre>
+          Retrieve director details by name (e.g.,
+          <code>/directors/Christopher Nolan</code>)
         </td>
-      </tr>
-
-      <!-- Register user -->
-      <tr>
-        <td>POST</td>
-        <td>/users</td>
-        <td>Register a new user</td>
         <td>
-          <pre>
-{
-  "message": "User newUser123 registered successfully."
+          <pre><code>{
+  "Name": "Christopher Nolan",
+  "Bio": "English film director, producer, screenwriter.",
+  "Movies": ["Inception", "The Dark Knight", "Interstellar"]
 }
-          </pre>
-        </td>
-      </tr>
-
-      <!-- Update user -->
-      <tr>
-        <td>PUT</td>
-        <td>/users/:username</td>
-        <td>Update user information</td>
-        <td>
-          <pre>
-{
-  "message": "User newUser123 information updated."
-}
-          </pre>
-        </td>
-      </tr>
-
-      <!-- Add movie to favorites -->
-      <tr>
-        <td>POST</td>
-        <td>/users/:username/favorites/:movieId</td>
-        <td>Add a movie to user’s favorites</td>
-        <td>
-          <pre>
-{
-  "message": "Inception has been added to newUser123's favorites."
-}
-          </pre>
-        </td>
-      </tr>
-
-      <!-- Remove movie from favorites -->
-      <tr>
-        <td>DELETE</td>
-        <td>/users/:username/favorites/:movieId</td>
-        <td>Remove a movie from user’s favorites</td>
-        <td>
-          <pre>
-{
-  "message": "Inception has been removed from newUser123's favorites."
-}
-          </pre>
-        </td>
-      </tr>
-
-      <!-- Deregister user -->
-      <tr>
-        <td>DELETE</td>
-        <td>/users/:username</td>
-        <td>Deregister user</td>
-        <td>
-          <pre>
-{
-  "message": "User newUser123 deregistered."
-}
-          </pre>
+        </code></pre>
         </td>
       </tr>
     </table>
