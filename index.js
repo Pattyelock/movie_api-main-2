@@ -117,7 +117,7 @@ app.delete("/users/:username/movies/:movieId", (req, res) => {
 
 // 9. Allow existing users to deregister
 app.delete("/users/:username", (req, res) => {
-  Users.findOneAndRemove({ Username: req.params.username })
+  Users.findOneAndDelete({ Username: req.params.username })
     .then((user) => {
       if (user) {
         res.status(200).send(`${req.params.username} was deleted.`);
