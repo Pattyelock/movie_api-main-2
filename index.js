@@ -1,4 +1,3 @@
-// Import required packages
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -21,9 +20,49 @@ mongoose
   .then(() => console.log("Connected to the myflix database"))
   .catch((err) => console.error("Database connection error:", err));
 
-// Define CRUD operations
+// Endpoints
 
-// 1. Create a new user
+// 1. Return a list of ALL movies
+app.get("/movies", (req, res) => {
+  Movies.find()
+    .then((movies) => res.json(movies))
+    .catch((err) => res.status(500).send("Error: " + err));
+});
+
+// 2. Return data about a single movie by title
+app.get("/movies/:title", (req, res) => {
+  Movies.findOne({ Title: req.params.title })
+    .then((movie) => movie ? res.json(movie) : res.status(404).send("Movie not found"))
+    .catch((err) => res.status(500).send("Error: " + err));
+});
+
+// 3. Return data about a genre by name
+app.get("/genres/:name", (req, res) => {
+  Movies.findOne({ "Genre.Name": req.params.name })
+    .then((movie) => {
+      if (movie) {
+        res.json(movie.Genre);
+      } else {
+        res.status(404).send("Genre not found");
+      }
+    })
+    .catch((err) => res.status(500).send("Error: " + err));
+});
+
+// 4. Return data about a director by name
+app.get("/directors/:name", (req, res) => {
+  Movies.findOne({ "Director.Name": req.params.name })
+    .then((movie) => {
+      if (movie) {
+        res.json(movie.Director);
+      } else {
+        res.status(404).send("Director not found");
+      }
+    })
+    .catch((err) => res.status(500).send("Error: " + err));
+});
+
+// 5. Allow new users to register
 app.post("/users", (req, res) => {
   Users.create({
     Username: req.body.Username,
@@ -36,27 +75,7 @@ app.post("/users", (req, res) => {
     .catch((err) => res.status(500).send("Error: " + err));
 });
 
-// 2. Get all movies
-app.get("/movies", (req, res) => {
-  Movies.find()
-    .then((movies) => res.json(movies))
-    .catch((err) => res.status(500).send("Error: " + err));
-});
-
-// 3. Get a specific movie by title
-app.get("/movies/:title", (req, res) => {
-  Movies.findOne({ Title: req.params.title })
-    .then((movie) => {
-      if (movie) {
-        res.json(movie);
-      } else {
-        res.status(404).send("Movie not found");
-      }
-    })
-    .catch((err) => res.status(500).send("Error: " + err));
-});
-
-// 4. Update a user's info
+// 6. Allow users to update their user info
 app.put("/users/:username", (req, res) => {
   Users.findOneAndUpdate(
     { Username: req.params.username },
@@ -68,13 +87,13 @@ app.put("/users/:username", (req, res) => {
         Birthday: req.body.Birthday,
       },
     },
-    { new: true } // Return the updated document
+    { new: true }
   )
     .then((updatedUser) => res.json(updatedUser))
     .catch((err) => res.status(500).send("Error: " + err));
 });
 
-// 5. Add a movie to a user's favorites
+// 7. Allow users to add a movie to their list of favorites
 app.post("/users/:username/movies/:movieId", (req, res) => {
   Users.findOneAndUpdate(
     { Username: req.params.username },
@@ -85,7 +104,7 @@ app.post("/users/:username/movies/:movieId", (req, res) => {
     .catch((err) => res.status(500).send("Error: " + err));
 });
 
-// 6. Remove a movie from a user's favorites
+// 8. Allow users to remove a movie from their list of favorites
 app.delete("/users/:username/movies/:movieId", (req, res) => {
   Users.findOneAndUpdate(
     { Username: req.params.username },
@@ -96,7 +115,7 @@ app.delete("/users/:username/movies/:movieId", (req, res) => {
     .catch((err) => res.status(500).send("Error: " + err));
 });
 
-// 7. Delete a user
+// 9. Allow existing users to deregister
 app.delete("/users/:username", (req, res) => {
   Users.findOneAndRemove({ Username: req.params.username })
     .then((user) => {

@@ -1,127 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>API Documentation</title>
-  </head>
-  <body>
-    <h1>Welcome to My Movie API Documentation</h1>
-    <p>Here you will find information about the API and its endpoints.</p>
-    <p>
-      <strong>Base URL:</strong> <code>http://localhost:8080</code> (or your
-      live API URL)
-    </p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Documentation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    pre {
+      background: #f9f9f9;
+      padding: 10px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>API Documentation</h1>
+  <p>This documentation outlines the available endpoints for the movie API and provides details about how to use each one.</p>
 
-    <h2>API Endpoints</h2>
-    <table border="1">
+  <table>
+    <thead>
       <tr>
-        <th>Request</th>
-        <th>URL Endpoint</th>
+        <th>Method</th>
+        <th>Endpoint</th>
         <th>Description</th>
-        <th>Response</th>
+        <th>Details</th>
       </tr>
-
-      <!-- Get all movies -->
+    </thead>
+    <tbody>
       <tr>
         <td>GET</td>
         <td><code>/movies</code></td>
-        <td>Retrieve a list of all movies</td>
+        <td>Return a list of ALL movies</td>
         <td>
+          <strong>Response:</strong>
           <pre><code>[
   {
+    "_id": "641e8bf5d22e42419cabc123",
     "Title": "Inception",
-    "Description": "A mind-bending thriller where dream infiltration is a reality.",
-    "Genre": { "Name": "Sci-Fi", "Description": "Science fiction" },
-    "Director": { "Name": "Christopher Nolan", "Bio": "English film director, producer, screenwriter." },
-    "Actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"],
+    "Description": "A thief who steals corporate secrets through the use of dream-sharing technology...",
+    "Genre": { "Name": "Sci-Fi", "Description": "Science fiction films" },
+    "Director": { "Name": "Christopher Nolan", "Bio": "British-American film director..." },
+    "Actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt"],
     "ImagePath": "/images/inception.jpg",
     "Featured": true
   },
-  {
-    "Title": "The Dark Knight",
-    "Description": "Batman sets out to dismantle the remaining criminal organizations in Gotham City.",
-    "Genre": { "Name": "Action", "Description": "Action-packed movie" },
-    "Director": { "Name": "Christopher Nolan", "Bio": "English film director, producer, screenwriter." },
-    "Actors": ["Christian Bale", "Heath Ledger", "Aaron Eckhart"],
-    "ImagePath": "/images/dark_knight.jpg",
-    "Featured": true
-  }
-]
-        </code></pre>
+  ...
+]</code></pre>
         </td>
       </tr>
-
-      <!-- Get movie by title -->
       <tr>
         <td>GET</td>
         <td><code>/movies/:title</code></td>
+        <td>Return data about a single movie by title</td>
         <td>
-          Retrieve details of a movie by title (e.g.,
-          <code>/movies/Inception</code>)
-        </td>
-        <td>
+          <strong>Path Parameter:</strong> <code>title</code> (string)<br>
+          <strong>Response:</strong>
           <pre><code>{
+  "_id": "641e8bf5d22e42419cabc123",
   "Title": "Inception",
-  "Description": "A mind-bending thriller where dream infiltration is a reality.",
-  "Genre": { "Name": "Sci-Fi", "Description": "Science fiction" },
-  "Director": { "Name": "Christopher Nolan", "Bio": "English film director, producer, screenwriter." },
-  "Actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"],
+  "Description": "A thief who steals corporate secrets through the use of dream-sharing technology...",
+  "Genre": { "Name": "Sci-Fi", "Description": "Science fiction films" },
+  "Director": { "Name": "Christopher Nolan", "Bio": "British-American film director..." },
+  "Actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt"],
   "ImagePath": "/images/inception.jpg",
   "Featured": true
-}
-        </code></pre>
+}</code></pre>
         </td>
       </tr>
-
-      <!-- Get genre by name -->
       <tr>
         <td>GET</td>
         <td><code>/genres/:name</code></td>
+        <td>Return data about a genre by name</td>
         <td>
-          Retrieve genre details by name (e.g., <code>/genres/Sci-Fi</code>)
-        </td>
-        <td>
+          <strong>Path Parameter:</strong> <code>name</code> (string)<br>
+          <strong>Response:</strong>
           <pre><code>{
-  "genre": "Sci-Fi",
-  "movies": [
-    {
-      "Title": "Inception",
-      "Description": "A mind-bending thriller where dream infiltration is a reality.",
-      "Director": "Christopher Nolan",
-      "Actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"],
-      "ImagePath": "/images/inception.jpg"
-    },
-    {
-      "Title": "The Matrix",
-      "Description": "A computer hacker learns from mysterious rebels about the true nature of his reality.",
-      "Director": "The Wachowskis",
-      "Actors": ["Keanu Reeves", "Laurence Fishburne", "Carrie-Anne Moss"],
-      "ImagePath": "/images/matrix.jpg"
-    }
-  ]
-}
-        </code></pre>
+  "Name": "Sci-Fi",
+  "Description": "Science fiction films"
+}</code></pre>
         </td>
       </tr>
-
-      <!-- Get director by name -->
       <tr>
         <td>GET</td>
         <td><code>/directors/:name</code></td>
+        <td>Return data about a director by name</td>
         <td>
-          Retrieve director details by name (e.g.,
-          <code>/directors/Christopher Nolan</code>)
-        </td>
-        <td>
+          <strong>Path Parameter:</strong> <code>name</code> (string)<br>
+          <strong>Response:</strong>
           <pre><code>{
   "Name": "Christopher Nolan",
-  "Bio": "English film director, producer, screenwriter.",
-  "Movies": ["Inception", "The Dark Knight", "Interstellar"]
-}
-        </code></pre>
+  "Bio": "British-American film director, producer, and screenwriter...",
+  "BirthYear": 1970
+}</code></pre>
         </td>
       </tr>
-    </table>
-  </body>
+      <tr>
+        <td>POST</td>
+        <td><code>/users</code></td>
+        <td>Register a new user</td>
+        <td>
+          <strong>Request Body:</strong>
+          <pre><code>{
+  "Username": "johndoe",
+  "Password": "password123",
+  "Email": "johndoe@example.com",
+  "Birthday": "1990-01-01"
+}</code></pre>
+          <strong>Response:</strong>
+          <pre><code>{
+  "_id": "641e8bf5d22e42419cabc678",
+  "Username": "johndoe",
+  "Email": "johndoe@example.com",
+  "Birthday": "1990-01-01T00:00:00.000Z",
+  "FavoriteMovies": []
+}</code></pre>
+        </td>
+      </tr>
+      <tr>
+        <td>PUT</td>
+        <td><code>/users/:username</code></td>
+        <td>Update a user's info</td>
+        <td>
+          <strong>Path Parameter:</strong> <code>username</code> (string)<br>
+          <strong>Request Body:</strong>
+          <pre><code>{
+  "Username": "johnupdated",
+  "Password": "newpassword",
+  "Email": "johnupdated@example.com",
+  "Birthday": "1991-01-01"
+}</code></pre>
+          <strong>Response:</strong>
+          <pre><code>{
+  "_id": "641e8bf5d22e42419cabc678",
+  "Username": "johnupdated",
+  "Email": "johnupdated@example.com",
+  "Birthday": "1991-01-01T00:00:00.000Z",
+  "FavoriteMovies": []
+}</code></pre>
+        </td>
+      </tr>
+      <tr>
+        <td>POST</td>
+        <td><code>/users/:username/movies/:movieId</code></td>
+        <td>Add a movie to a user's favorites</td>
+        <td>
+          <strong>Path Parameters:</strong> <code>username</code> (string), <code>movieId</code> (string)<br>
+          <strong>Response:</strong>
+          <pre><code>{
+  "_id": "641e8bf5d22e42419cabc678",
+  "Username": "johndoe",
+  "FavoriteMovies": ["641e8bf5d22e42419cabc123"]
+}</code></pre>
+        </td>
+      </tr>
+      <tr>
+        <td>DELETE</td>
+        <td><code>/users/:username/movies/:movieId</code></td>
+        <td>Remove a movie from a user's favorites</td>
+        <td>
+          <strong>Path Parameters:</strong> <code>username</code> (string), <code>movieId</code> (string)<br>
+          <strong>Response:</strong>
+          <pre><code>{
+  "_id": "641e8bf5d22e42419cabc678",
+  "Username": "johndoe",
+  "FavoriteMovies": []
+}</code></pre>
+        </td>
+      </tr>
+      <tr>
+        <td>DELETE</td>
+        <td><code>/users/:username</code></td>
+        <td>Deregister a user</td>
+        <td>
+          <strong>Path Parameter:</strong> <code>username</code> (string)<br>
+          <strong>Response:</strong>
+          <pre><code>"johndoe was deleted."</code></pre>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
 </html>
