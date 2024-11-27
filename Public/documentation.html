@@ -126,73 +126,76 @@
 }</code></pre>
           <strong>Response:</strong>
           <pre><code>{
-  "_id": "641e8bf5d22e42419cabc678",
+  "_id": "user_id",
   "Username": "johndoe",
   "Email": "johndoe@example.com",
-  "Birthday": "1990-01-01T00:00:00.000Z",
-  "FavoriteMovies": []
-}</code></pre>
-        </td>
-      </tr>
-      <tr>
-        <td>PUT</td>
-        <td><code>/users/:username</code></td>
-        <td>Update a user's info</td>
-        <td>
-          <strong>Path Parameter:</strong> <code>username</code> (string)<br>
-          <strong>Request Body:</strong>
-          <pre><code>{
-  "Username": "johnupdated",
-  "Password": "newpassword",
-  "Email": "johnupdated@example.com",
-  "Birthday": "1991-01-01"
-}</code></pre>
-          <strong>Response:</strong>
-          <pre><code>{
-  "_id": "641e8bf5d22e42419cabc678",
-  "Username": "johnupdated",
-  "Email": "johnupdated@example.com",
-  "Birthday": "1991-01-01T00:00:00.000Z",
+  "Birthday": "1990-01-01",
   "FavoriteMovies": []
 }</code></pre>
         </td>
       </tr>
       <tr>
         <td>POST</td>
-        <td><code>/users/:username/movies/:movieId</code></td>
-        <td>Add a movie to a user's favorites</td>
+        <td><code>/users/:Username/movies/:MovieID</code></td>
+        <td>Add a movie to the user's list of favorites</td>
         <td>
-          <strong>Path Parameters:</strong> <code>username</code> (string), <code>movieId</code> (string)<br>
+          <strong>Path Parameters:</strong>
+          <code>Username</code> (string), <code>MovieID</code> (string)<br>
           <strong>Response:</strong>
           <pre><code>{
-  "_id": "641e8bf5d22e42419cabc678",
+  "_id": "user_id",
   "Username": "johndoe",
-  "FavoriteMovies": ["641e8bf5d22e42419cabc123"]
+  "FavoriteMovies": ["movie_id_1", "movie_id_2"]
 }</code></pre>
         </td>
       </tr>
       <tr>
         <td>DELETE</td>
-        <td><code>/users/:username/movies/:movieId</code></td>
-        <td>Remove a movie from a user's favorites</td>
+        <td><code>/users/:Username/movies/:MovieID</code></td>
+        <td>Remove a movie from the user's list of favorites</td>
         <td>
-          <strong>Path Parameters:</strong> <code>username</code> (string), <code>movieId</code> (string)<br>
+          <strong>Path Parameters:</strong>
+          <code>Username</code> (string), <code>MovieID</code> (string)<br>
           <strong>Response:</strong>
           <pre><code>{
-  "_id": "641e8bf5d22e42419cabc678",
+  "_id": "user_id",
   "Username": "johndoe",
-  "FavoriteMovies": []
+  "FavoriteMovies": ["movie_id_1"]
 }</code></pre>
         </td>
       </tr>
       <tr>
         <td>DELETE</td>
-        <td><code>/users/:username</code></td>
-        <td>Deregister a user</td>
+        <td><code>/users/:Username</code></td>
+        <td>Delete a user</td>
         <td>
-          <strong>Path Parameter:</strong> <code>username</code> (string)<br>
+          <strong>Path Parameter:</strong> <code>Username</code> (string)<br>
           <strong>Response:</strong>
-          <pre><code>"johndoe was deleted."</code></pre>
+          <pre><code>Status: 200 OK
+Message: "johndoe was deleted."
+</code></pre>
+        </td>
+      </tr>
+      <tr>
+        <td>GET</td>
+        <td><code>/login</code></td>
+        <td>User login</td>
+        <td>
+          <strong>Request Body:</strong>
+          <pre><code>{
+  "Username": "johndoe",
+  "Password": "password123"
+}</code></pre>
+          <strong>Response:</strong>
+          <pre><code>{
+  "user": {
+    "_id": "user_id",
+    "Username": "johndoe",
+    "Email": "johndoe@example.com",
+    "Birthday": "1990-01-01"
+  },
+  "token": "your_jwt_token_here"
+}</code></pre>
         </td>
       </tr>
     </tbody>
