@@ -14,20 +14,25 @@ passport.use(
       usernameField: "Username", // Field for username
       passwordField: "Password", // Field for password
     },
-    (username, password, callback) => {
-      console.log(`Attempting login for user: ${username}`);
-      Users.findOne({ Username: username })
+    async (username, password, callback) => {
+      console.log(`${username} ${password}`);
+      await Users.findOne({ Username: username })
         .then((user) => {
           if (!user) {
-            console.log("Login failed: Incorrect username");
-            return callback(null, false, { message: "Incorrect username or password." });
+            console.log("Incorrect username");
+            return callback(null, false, {
+              message: "Incorrect username or password.",
+            });
           }
-          // Successful authentication
+          if (!user.validatePassword(password)) {
+            console.log("Incorrect password");
+            return callback(null, false, { message: "Incorrect password." });
+          }
           console.log("Login successful");
           return callback(null, user);
         })
         .catch((error) => {
-          console.error("Error during login:", error);
+          console.log(error);
           return callback(error);
         });
     }
@@ -60,4 +65,3 @@ passport.use(
     }
   )
 );
-
