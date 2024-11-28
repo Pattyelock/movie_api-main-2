@@ -22,6 +22,11 @@ let generateJWTToken = (user) => {
  */
 module.exports = (app) => {
   app.post("/login", (req, res) => {
+    const { Username, Password } = req.body;
+    if (!Username || !Password) {
+      return res.status(400).json({ message: "Username and Password are required" });
+    }
+    
     passport.authenticate("local", { session: false }, (error, user, info) => {
       if (error || !user) {
         console.log("Login error or invalid credentials:", error || info);
@@ -37,14 +42,9 @@ module.exports = (app) => {
           return res.status(500).send("Login failed.");
         }
 
-        // Prepare user payload and generate JWT
-        const userPayload = {
-          _id: user._id,
-          Username: user.Username,
-        };
+        const userPayload = { _id: user._id, Username: user.Username };
         let token = generateJWTToken(userPayload);
 
-        // Return the user object and JWT
         console.log("Login successful:", user.Username);
         return res.json({ user: userPayload, token });
       });

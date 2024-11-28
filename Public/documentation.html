@@ -1,57 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>API Documentation</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
-    }
-    th, td {
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background-color: #f4f4f4;
-    }
-    pre {
-      background: #f9f9f9;
-      padding: 10px;
-      overflow-x: auto;
-    }
-  </style>
-</head>
-<body>
-  <h1>API Documentation</h1>
-  <p>This documentation outlines the available endpoints for the movie API and provides details about how to use each one.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Documentation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ccc;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      pre {
+        background: #f9f9f9;
+        padding: 10px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>API Documentation</h1>
+    <p>
+      This documentation outlines the available endpoints for the movie API and
+      provides details about how to use each one.
+    </p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Method</th>
-        <th>Endpoint</th>
-        <th>Description</th>
-        <th>Details</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>GET</td>
-        <td><code>/movies</code></td>
-        <td>Return a list of ALL movies</td>
-        <td>
-          <strong>Response:</strong>
-          <pre><code>[
+    <table>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Endpoint</th>
+          <th>Description</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GET</td>
+          <td><code>/movies</code></td>
+          <td>Return a list of ALL movies</td>
+          <td>
+            <strong>Response:</strong>
+            <pre><code>[
   {
     "_id": "641e8bf5d22e42419cabc123",
     "Title": "Inception",
@@ -64,16 +71,16 @@
   },
   ...
 ]</code></pre>
-        </td>
-      </tr>
-      <tr>
-        <td>GET</td>
-        <td><code>/movies/:title</code></td>
-        <td>Return data about a single movie by title</td>
-        <td>
-          <strong>Path Parameter:</strong> <code>title</code> (string)<br>
-          <strong>Response:</strong>
-          <pre><code>{
+          </td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code>/movies/:title</code></td>
+          <td>Return data about a single movie by title</td>
+          <td>
+            <strong>Path Parameter:</strong> <code>title</code> (string)<br />
+            <strong>Response:</strong>
+            <pre><code>{
   "_id": "641e8bf5d22e42419cabc123",
   "Title": "Inception",
   "Description": "A thief who steals corporate secrets through the use of dream-sharing technology...",
@@ -83,111 +90,121 @@
   "ImagePath": "/images/inception.jpg",
   "Featured": true
 }</code></pre>
-        </td>
-      </tr>
-      <tr>
-        <td>GET</td>
-        <td><code>/genres/:name</code></td>
-        <td>Return data about a genre by name</td>
-        <td>
-          <strong>Path Parameter:</strong> <code>name</code> (string)<br>
-          <strong>Response:</strong>
-          <pre><code>{
+          </td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code>/genres/:name</code></td>
+          <td>Return data about a genre by name</td>
+          <td>
+            <strong>Path Parameter:</strong> <code>name</code> (string)<br />
+            <strong>Response:</strong>
+            <pre><code>{
   "Name": "Sci-Fi",
   "Description": "Science fiction films"
 }</code></pre>
-        </td>
-      </tr>
-      <tr>
-        <td>GET</td>
-        <td><code>/directors/:name</code></td>
-        <td>Return data about a director by name</td>
-        <td>
-          <strong>Path Parameter:</strong> <code>name</code> (string)<br>
-          <strong>Response:</strong>
-          <pre><code>{
+          </td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code>/directors/:name</code></td>
+          <td>Return data about a director by name</td>
+          <td>
+            <strong>Path Parameter:</strong> <code>name</code> (string)<br />
+            <strong>Response:</strong>
+            <pre><code>{
   "Name": "Christopher Nolan",
   "Bio": "British-American film director, producer, and screenwriter...",
   "BirthYear": 1970
 }</code></pre>
-        </td>
-      </tr>
-      <tr>
-        <td>POST</td>
-        <td><code>/users</code></td>
-        <td>Register a new user</td>
-        <td>
-          <strong>Request Body:</strong>
-          <pre><code>{
+          </td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td><code>/users</code></td>
+          <td>Register a new user</td>
+          <td>
+            <strong>Request Body:</strong>
+            <pre><code>{
   "Username": "johndoe",
   "Password": "password123",
   "Email": "johndoe@example.com",
   "Birthday": "1990-01-01"
 }</code></pre>
-          <strong>Response:</strong>
-          <pre><code>{
+            <strong>Response:</strong>
+            <pre><code>{
   "_id": "user_id",
   "Username": "johndoe",
   "Email": "johndoe@example.com",
   "Birthday": "1990-01-01",
   "FavoriteMovies": []
 }</code></pre>
-        </td>
-      </tr>
-      <tr>
-        <td>POST</td>
-        <td><code>/users/:Username/movies/:MovieID</code></td>
-        <td>Add a movie to the user's list of favorites</td>
-        <td>
-          <strong>Path Parameters:</strong>
-          <code>Username</code> (string), <code>MovieID</code> (string)<br>
-          <strong>Response:</strong>
-          <pre><code>{
+          </td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td><code>/users/:Username/movies/:MovieID</code></td>
+          <td>Add a movie to the user's list of favorites</td>
+          <td>
+            <strong>Path Parameters:</strong>
+            <code>Username</code> (string), <code>MovieID</code> (string)<br />
+            <strong>Response:</strong>
+            <pre><code>{
   "_id": "user_id",
   "Username": "johndoe",
   "FavoriteMovies": ["movie_id_1", "movie_id_2"]
 }</code></pre>
-        </td>
-      </tr>
-      <tr>
-        <td>DELETE</td>
-        <td><code>/users/:Username/movies/:MovieID</code></td>
-        <td>Remove a movie from the user's list of favorites</td>
-        <td>
-          <strong>Path Parameters:</strong>
-          <code>Username</code> (string), <code>MovieID</code> (string)<br>
-          <strong>Response:</strong>
-          <pre><code>{
+            <strong>Error Response:</strong>
+            <pre><code>Status: 400 Bad Request
+Message: "Movie not found in the database"</code></pre>
+          </td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td><code>/users/:Username/movies/:MovieID</code></td>
+          <td>Remove a movie from the user's list of favorites</td>
+          <td>
+            <strong>Path Parameters:</strong>
+            <code>Username</code> (string), <code>MovieID</code> (string)<br />
+            <strong>Response:</strong>
+            <pre><code>{
   "_id": "user_id",
   "Username": "johndoe",
   "FavoriteMovies": ["movie_id_1"]
 }</code></pre>
-        </td>
-      </tr>
-      <tr>
-        <td>DELETE</td>
-        <td><code>/users/:Username</code></td>
-        <td>Delete a user</td>
-        <td>
-          <strong>Path Parameter:</strong> <code>Username</code> (string)<br>
-          <strong>Response:</strong>
-          <pre><code>Status: 200 OK
+            <strong>Error Response:</strong>
+            <pre><code>Status: 404 Not Found
+Message: "Movie not found in favorites list"</code></pre>
+          </td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td><code>/users/:Username</code></td>
+          <td>Delete a user</td>
+          <td>
+            <strong>Path Parameter:</strong>
+            <code>Username</code> (string)<br />
+            <strong>Response:</strong>
+            <pre><code>Status: 200 OK
 Message: "johndoe was deleted."
 </code></pre>
-        </td>
-      </tr>
-      <tr>
-        <td>GET</td>
-        <td><code>/login</code></td>
-        <td>User login</td>
-        <td>
-          <strong>Request Body:</strong>
-          <pre><code>{
+            <strong>Error Response:</strong>
+            <pre><code>Status: 404 Not Found
+Message: "User not found"</code></pre>
+          </td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code>/login</code></td>
+          <td>User login</td>
+          <td>
+            <strong>Request Body:</strong>
+            <pre><code>{
   "Username": "johndoe",
   "Password": "password123"
 }</code></pre>
-          <strong>Response:</strong>
-          <pre><code>{
+            <strong>Response:</strong>
+            <pre><code>{
   "user": {
     "_id": "user_id",
     "Username": "johndoe",
@@ -196,9 +213,12 @@ Message: "johndoe was deleted."
   },
   "token": "your_jwt_token_here"
 }</code></pre>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</body>
+            <strong>Error Response:</strong>
+            <pre><code>Status: 401 Unauthorized
+Message: "Invalid credentials"</code></pre>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
 </html>
