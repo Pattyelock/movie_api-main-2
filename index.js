@@ -12,6 +12,11 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(passport.initialize());
 
+// Root route
+app.get("/", (req, res) => {
+  res.send("Welcome to the movie API!");
+});
+
 // Passport config
 require("./passport"); // Assuming passport config is in a separate file
 
