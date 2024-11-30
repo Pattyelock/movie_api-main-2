@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const { Movie, User } = require("./models");
 const cors = require("cors");
 const auth = require("./auth");
+const jwt = require("jsonwebtoken");
 const app = express();
 
 // Middleware
@@ -17,7 +18,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the movie API!");
 });
 
-require("dotenv").config();
+require("dotenv").config(); // Load environment variables from .env file
 
 // Passport config
 require("./passport"); // Assuming passport config is in a separate file
@@ -25,7 +26,7 @@ require("./passport"); // Assuming passport config is in a separate file
 // Import routes for authentication
 auth(app);
 
-// Connect to MongoDB
+// Connect to MongoDB using environment variable MONGO_URI
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -77,7 +78,7 @@ app.post("/login", (req, res) => {
       }
 
       const userPayload = { _id: user._id, Username: user.Username };
-      const token = jwt.sign(userPayload, "your_jwt_secret", {
+      const token = jwt.sign(userPayload, process.env.JWT_SECRET, {
         expiresIn: "7d",
         algorithm: "HS256",
       });
