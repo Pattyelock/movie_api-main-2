@@ -21,12 +21,12 @@ app.get("/", (req, res) => {
 require("dotenv").config(); // Load environment variables from .env file
 
 // Passport config
-require("./passport"); // Assuming passport config is in a separate file
+require("./passport");
 
 // Import routes for authentication
 auth(app);
 
-// Connect to MongoDB using environment variable MONGO_URI
+// Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -145,6 +145,45 @@ app.get("/movies/director/:director", async (req, res) => {
     return res
       .status(500)
       .json({ message: "Error fetching movies by director", error });
+  }
+});
+
+// Add a New Movie (POST /movies) - TEMPORARILY NO AUTHENTICATION
+app.post("/movies", async (req, res) => {
+  const {
+    Title,
+    Description,
+    Genre,
+    Director,
+    ImagePath,
+    Featured,
+  } = req.body;
+
+  if (!Title || !Description || !Genre || !Director) {
+    return res.status(400).json({
+      message: "Required fields: Title, Description, Genre, Director",
+    });
+  }
+
+  try {
+    const existingMovie = await Movie.findOne({ Title });
+    if (existingMovie) {
+      return res.status(409).json({ message: "Movie already exists" });
+    }
+
+    const newMovie = new Movie({
+      Title,
+      Description,
+      Genre,
+      Director,
+      ImagePath,
+      Featured: Featured || false,
+    });
+
+    await newMovie.save();
+    return res.status(201).json({ message: "Movie added successfully", newMovie });
+  } catch (error) {
+    return res.status(500).json({ message: "Error adding movie", error });
   }
 });
 
