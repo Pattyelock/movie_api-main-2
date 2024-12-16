@@ -18,6 +18,14 @@ const movieSchema = mongoose.Schema({
   Actors: [String],
   ImagePath: { type: String, default: '/images/default.jpg' },
   Featured: { type: Boolean, default: false },
+  Reviews: [
+    {
+      UserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      Comment: { type: String },
+      Rating: { type: Number, min: 1, max: 5 },
+      CreatedAt: { type: Date, default: Date.now },
+    }
+  ],
 });
 
 // Define User schema
@@ -41,7 +49,6 @@ userSchema.methods.validatePassword = function (password) {
   return bcrypt.compareSync(password, this.Password);
 };
 
-// Create Models
 const Movie = mongoose.model('Movie', movieSchema);
 const User = mongoose.model('User', userSchema);
 
