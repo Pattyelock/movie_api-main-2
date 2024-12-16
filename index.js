@@ -14,7 +14,7 @@ mongoose.connect(dbURI)
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Enable CORS
-const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = ['http://localhost:3000', 'https://your-heroku-app.herokuapp.com'];
 app.use(cors({
   origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
