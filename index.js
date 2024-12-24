@@ -12,10 +12,27 @@ const Movies = Models.Movie;
 const Users = Models.User;
 
 // Connect to MongoDB
-mongoose
-  .connect("mongodb://localhost:27017/myflix")
-  .then(() => console.log("Connected to the myflix database"))
-  .catch((err) => console.error("Database connection error:", err));
+if (!process.env.MONGO_URI) {
+  console.error('Error: MONGO_URI not set in environment variables.');
+  process.exit(1);
+}
+
+// Connect to MongoDB
+const dbURI = process.env.MONGO_URI || 'mongodb://localhost:27017/myflix';
+mongoose.connect(dbURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('MongoDB connected to', dbURI))
+  .catch((err) => console.error('MongoDB connection error:', err));
+
+// Enable CORS
+const allowedOrigins = ['http://localhost:3000', 'https://myflix-app.herokuapp.com'];
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
 
 // Import Passport strategies
 require("./passport");
