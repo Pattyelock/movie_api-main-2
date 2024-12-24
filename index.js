@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const Models = require("./models.js");
+const cors = require("cors");
 
 // Initialize Express
 const app = express();
@@ -11,28 +12,29 @@ app.use(express.json()); // Use Express's built-in JSON parser
 const Movies = Models.Movie;
 const Users = Models.User;
 
-// Connect to MongoDB
-if (!process.env.MONGO_URI) {
-  console.error('Error: MONGO_URI not set in environment variables.');
-  process.exit(1);
-}
 
 // Connect to MongoDB
-const dbURI = process.env.MONGO_URI || 'mongodb://localhost:27017/myflix';
-mongoose.connect(dbURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => console.log('MongoDB connected to', dbURI))
-  .catch((err) => console.error('MongoDB connection error:', err));
+const dbURI = process.env.MONGO_URI || "mongodb://localhost:27017/myflix";
+mongoose
+  .connect(dbURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected to", dbURI))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 // Enable CORS
-const allowedOrigins = ['http://localhost:3000', 'https://myflix-app.herokuapp.com'];
-app.use(cors({
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true,
-}));
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://myflix-app.herokuapp.com",
+];
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 // Import Passport strategies
 require("./passport");
@@ -73,9 +75,7 @@ app.get(
   async (req, res) => {
     await Movies.findOne({ "Genre.Name": req.params.name })
       .then((movie) =>
-        movie
-          ? res.json(movie.Genre)
-          : res.status(404).send("Genre not found")
+        movie ? res.json(movie.Genre) : res.status(404).send("Genre not found")
       )
       .catch((err) => res.status(500).send("Error: " + err));
   }
