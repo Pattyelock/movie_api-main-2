@@ -28,13 +28,14 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://myflix-app.herokuapp.com",
 ];
-app.use(
-  cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+// // app.use(
+//   cors({
+//     origin: allowedOrigins,
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   })
+// );
+app.use(cors());
 
 // Import Passport strategies
 require("./passport");
