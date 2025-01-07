@@ -12,7 +12,6 @@ app.use(express.json()); // Use Express's built-in JSON parser
 const Movies = Models.Movie;
 const Users = Models.User;
 
-
 // Connect to MongoDB
 const dbURI = process.env.MONGO_URI || "mongodb://localhost:27017/myflix";
 mongoose
@@ -46,14 +45,11 @@ let auth = require("./auth")(app);
 // Endpoints
 
 // 1. Return a list of ALL movies
-app.get(
-  "/movies",
-  async (req, res) => {
-    await Movies.find()
-      .then((movies) => res.json(movies))
-      .catch((err) => res.status(500).send("Error: " + err));
-  }
-);
+app.get("/movies", async (req, res) => {
+  await Movies.find()
+    .then((movies) => res.json(movies))
+    .catch((err) => res.status(500).send("Error: " + err));
+});
 
 // 2. Return data about a single movie by title
 app.get(
@@ -179,7 +175,12 @@ app.delete(
 );
 
 // Start the server
-const PORT = 8080;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// const PORT = 8080;
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
+
+const port = process.env.PORT || 8080;
+app.listen(port, "0.0.0.0", () => {
+  console.log("Listening on Port " + port);
 });
