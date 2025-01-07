@@ -22,18 +22,6 @@ mongoose
   .then(() => console.log("MongoDB connected to", dbURI))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// Enable CORS
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://myflix-app.herokuapp.com",
-];
-// // app.use(
-//   cors({
-//     origin: allowedOrigins,
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     credentials: true,
-//   })
-// );
 app.use(cors());
 
 // Import Passport strategies
@@ -175,12 +163,12 @@ app.delete(
 );
 
 // Start the server
-// const PORT = 8080;
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-
-const port = process.env.PORT || 8080;
-app.listen(port, "0.0.0.0", () => {
-  console.log("Listening on Port " + port);
+const PORT = 8080;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
+
+// const port = process.env.PORT || 8080;
+// app.listen(port, "0.0.0.0", () => {
+//   console.log("Listening on Port " + port);
+// });
