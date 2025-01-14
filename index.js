@@ -12,11 +12,13 @@ app.use(express.json()); // Use Express's built-in JSON parser
 const Movies = Models.Movie;
 const Users = Models.User;
 
+
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/myflix")
-  .then(() => console.log("Connected to the myflix database"))
+  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/myflix")
+  .then(() => console.log("Connected to the database"))
   .catch((err) => console.error("Database connection error:", err));
+
 
 // Import Passport strategies
 require("./passport");
