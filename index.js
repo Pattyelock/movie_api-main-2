@@ -224,7 +224,11 @@ app.delete(
 );
 
 // Start the server
-const PORT = 8080;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, (err) => {
+  if (err) {
+    console.error("Error starting server:", err);
+  } else {
+    console.log(`Server is running on port ${PORT}`);
+  }
 });
