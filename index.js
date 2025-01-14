@@ -8,6 +8,11 @@ dotenv.config();
 
 const app = express();
 
+// Root route to handle GET requests to '/'
+app.get('/', (req, res) => {
+  res.send('Welcome to the Movie API!');
+});
+
 // Check for required environment variables
 if (!process.env.MONGO_URI) {
   console.error('Error: MONGO_URI not set in environment variables.');
