@@ -1,236 +1,78 @@
-// Import dependencies
-const express = require("express");
-const mongoose = require("mongoose");
-const passport = require("passport");
-const Models = require("./models.js");
+const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
-// Initialize Express
+dotenv.config();
+
 const app = express();
-app.use(express.json()); // Use Express's built-in JSON parser
 
-// Import models
-const Movies = Models.Movie;
-const Users = Models.User;
-
+// Check for required environment variables
+if (!process.env.MONGO_URI) {
+  console.error('Error: MONGO_URI not set in environment variables.');
+  process.exit(1);
+}
 
 // Connect to MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/myflix")
-  .then(() => console.log("Connected to the database"))
-  .catch((err) => console.error("Database connection error:", err));
+const dbURI = process.env.MONGO_URI || 'mongodb://localhost:27017/myflix';
+mongoose.connect(dbURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('MongoDB connected to', dbURI))
+  .catch((err) => console.error('MongoDB connection error:', err));
 
+// Enable CORS
+const allowedOrigins = ['http://localhost:3000', 'https://myflix-app.herokuapp.com'];
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
 
-// Import Passport strategies
-require("./passport");
+// Middleware to parse JSON
+app.use(express.json());
 
-// Import authentication logic
-let auth = require("./auth")(app);
+// Secret key for JWT
+const SECRET_KEY = process.env.SECRET_KEY || 'your_secret_key';
 
-// Utility Functions
-const isValidString = (str) => typeof str === "string" && str.trim().length > 0;
-
-// Endpoints
-
-// 1. Return a list of ALL movies
-app.get(
-  "/movies",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const movies = await Movies.find();
-      res.json(movies);
-    } catch (err) {
-      res.status(500).send("Error: " + err);
-    }
+// Public route to generate token
+app.post('/login', (req, res) => {
+  const { username } = req.body;
+  if (!username) {
+    return res.status(400).json({ error: 'Username is required' });
   }
-);
-
-// 2. Return data about a single movie by title
-app.get(
-  "/movies/:title",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const movie = await Movies.findOne({ Title: req.params.title });
-      if (!movie) {
-        return res.status(404).send("Movie not found");
-      }
-      res.json(movie);
-    } catch (err) {
-      res.status(500).send("Error: " + err);
-    }
-  }
-);
-
-// 3. Return data about a genre by name
-app.get(
-  "/genres/:name",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const movie = await Movies.findOne({ "Genre.Name": req.params.name });
-      if (!movie) {
-        return res.status(404).send("Genre not found");
-      }
-      res.json(movie.Genre);
-    } catch (err) {
-      res.status(500).send("Error: " + err);
-    }
-  }
-);
-
-// 4. Return data about a director by name
-app.get(
-  "/directors/:name",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const movie = await Movies.findOne({ "Director.Name": req.params.name });
-      if (!movie) {
-        return res.status(404).send("Director not found");
-      }
-      res.json(movie.Director);
-    } catch (err) {
-      res.status(500).send("Error: " + err);
-    }
-  }
-);
-
-// 5. Allow new users to register (with validation)
-app.post("/users", async (req, res) => {
-  const { Username, Password, Email, Birthday } = req.body;
-
-  if (!isValidString(Username) || !isValidString(Password)) {
-    return res.status(400).send("Invalid username or password");
-  }
-
-  try {
-    const userExists = await Users.findOne({ Username });
-    if (userExists) {
-      return res.status(400).send("Username already exists");
-    }
-
-    const newUser = await Users.create({
-      Username,
-      Password, // Hashing would typically be applied here
-      Email,
-      Birthday,
-      FavoriteMovies: [],
-    });
-
-    res.status(201).json(newUser);
-  } catch (err) {
-    res.status(500).send("Error: " + err);
-  }
+  // Generate a token (for simplicity, no password check here)
+  const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+  res.json({ token });
 });
 
-// 6. Allow users to update their user info
-app.put(
-  "/users/:username",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    const { Username, Password, Email, Birthday } = req.body;
-
-    if (!isValidString(Username) || !isValidString(Password)) {
-      return res.status(400).send("Invalid username or password");
-    }
-
-    try {
-      const updatedUser = await Users.findOneAndUpdate(
-        { Username: req.params.username },
-        { $set: { Username, Password, Email, Birthday } },
-        { new: true }
-      );
-
-      res.json(updatedUser);
-    } catch (err) {
-      res.status(500).send("Error: " + err);
-    }
+// Middleware to verify JWT
+const authenticateToken = (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: 'Access denied. No token provided.' });
   }
-);
-
-// 7. Allow users to add a movie to their list of favorites
-app.post(
-  "/users/:username/movies/:movieId",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const movie = await Movies.findById(req.params.movieId);
-      if (!movie) {
-        return res.status(404).send("Movie not found");
-      }
-
-      const user = await Users.findOneAndUpdate(
-        {
-          Username: req.params.username,
-          FavoriteMovies: { $ne: req.params.movieId },
-        },
-        { $push: { FavoriteMovies: req.params.movieId } },
-        { new: true }
-      );
-
-      if (!user) {
-        return res
-          .status(400)
-          .send("Movie already in favorites or user not found");
-      }
-
-      res.json(user);
-    } catch (err) {
-      res.status(500).send("Error: " + err);
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid or expired token.' });
     }
-  }
-);
+    req.user = user;
+    next();
+  });
+};
 
-// 8. Allow users to remove a movie from their list of favorites
-app.delete(
-  "/users/:username/movies/:movieId",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const user = await Users.findOneAndUpdate(
-        { Username: req.params.username },
-        { $pull: { FavoriteMovies: req.params.movieId } },
-        { new: true }
-      );
+// Protected routes
+const moviesRoute = require('./routes/movies');
+app.use('/movies', authenticateToken, moviesRoute);
 
-      if (!user) {
-        return res.status(404).send("User not found");
-      }
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
-      res.json(user);
-    } catch (err) {
-      res.status(500).send("Error: " + err);
-    }
-  }
-);
-
-// 9. Allow existing users to deregister
-app.delete(
-  "/users/:username",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const user = await Users.findOneAndDelete({
-        Username: req.params.username,
-      });
-      if (!user) {
-        return res.status(404).send("User not found");
-      }
-
-      res.status(200).send(`${req.params.username} was deleted.`);
-    } catch (err) {
-      res.status(500).send("Error: " + err);
-    }
-  }
-);
-
-// Start the server
+// Set the port to 8080
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, (err) => {
-  if (err) {
-    console.error("Error starting server:", err);
-  } else {
-    console.log(`Server is running on port ${PORT}`);
-  }
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
