@@ -15,7 +15,7 @@ app.use(cors());
 app.use(passport.initialize());
 
 // Log headers middleware for debugging
-tapp.use((req, res, next) => {
+app.use((req, res, next) => {
   console.log("Headers:", req.headers);
   next();
 });
