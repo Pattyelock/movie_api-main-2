@@ -14,6 +14,12 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(passport.initialize());
 
+// Log headers middleware for debugging
+tapp.use((req, res, next) => {
+  console.log("Headers:", req.headers);
+  next();
+});
+
 // Root route
 app.get("/", (req, res) => {
   res.send("Welcome to the movie API!");
@@ -101,8 +107,12 @@ app.get("/movies", async (req, res) => {
 // Add Favorite Movie (POST /users/:username/favorites/:movieId) - Protected route
 app.post(
   "/users/:username/favorites/:movieId",
-  passport.authenticate("jwt", { session: false }),  // Token authentication required
+  passport.authenticate("jwt", { session: false }), // Token authentication required
   async (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Access denied. No token provided." });
+    }
+
     const { username, movieId } = req.params;
     try {
       const user = await User.findOne({ Username: username });
@@ -135,8 +145,12 @@ app.post(
 // Remove Favorite Movie (DELETE /users/:username/favorites/:movieId) - Protected route
 app.delete(
   "/users/:username/favorites/:movieId",
-  passport.authenticate("jwt", { session: false }),  // Token authentication required
+  passport.authenticate("jwt", { session: false }), // Token authentication required
   async (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Access denied. No token provided." });
+    }
+
     const { username, movieId } = req.params;
     try {
       const user = await User.findOne({ Username: username });
