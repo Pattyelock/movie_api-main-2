@@ -8,14 +8,6 @@ const cors = require("cors");
 const app = express();
 app.use(express.json()); // Use Express's built-in JSON parser
 
-// Define the root route
-app.get("/", (req, res) => {
-  res.send(`
-    <h1>Welcome to the Movie API!</h1>
-    <p>Visit /movies to get the list of movies.</p>
-  `);
-});
-
 // Import models
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -40,7 +32,7 @@ let auth = require("./auth")(app);
 
 // Endpoints
 
-// 1. Return a list of ALL movies
+// 1. Return a list of ALL movies (No authentication required)
 app.get("/movies", async (req, res) => {
   await Movies.find()
     .then((movies) => res.json(movies))
@@ -169,6 +161,11 @@ app.delete(
       .catch((err) => res.status(500).send("Error: " + err));
   }
 );
+
+// Root route
+app.get("/", (req, res) => {
+  res.send("Welcome to the movie API!");
+});
 
 // Start the server
 const port = process.env.PORT || 8080;
