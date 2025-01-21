@@ -8,6 +8,14 @@ const cors = require("cors");
 const app = express();
 app.use(express.json()); // Use Express's built-in JSON parser
 
+// Define the root route
+app.get("/", (req, res) => {
+  res.send(`
+    <h1>Welcome to the Movie API!</h1>
+    <p>Visit /movies to get the list of movies.</p>
+  `);
+});
+
 // Import models
 const Movies = Models.Movie;
 const Users = Models.User;
