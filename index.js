@@ -2,13 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const bodyParser = require("body-parser");
+const { Movie, User } = require("./models");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-require("dotenv").config(); // Load environment variables
-
-const { Movie, User } = require("./models");
-const auth = require("./auth");
-
 const app = express();
 
 // Middleware
@@ -16,160 +12,216 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(passport.initialize());
 
-// Debugging middleware
-app.use((req, res, next) => {
-  console.log("Incoming Request:", {
-    method: req.method,
-    url: req.url,
-    headers: req.headers,
-    body: req.body,
-  });
-  next();
-});
+require("dotenv").config(); // Load environment variables from .env file
+
+// Passport config
+require("./passport"); // Assuming passport config is in a separate file
 
 // Root route
 app.get("/", (req, res) => {
   res.send("Welcome to the movie API!");
 });
 
-// Passport configuration
-require("./passport");
-auth(app);
-
-// Connect to MongoDB
+// Connect to MongoDB using environment variable MONGO_URI
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("MongoDB connected"))
-  .catch((error) => console.error("MongoDB connection error:", error));
-
-// Helper function
-const validateInput = (input) =>
-  typeof input === "string" && input.trim().length > 0;
+  .catch((error) => console.log("MongoDB connection error:", error));
 
 // Routes
 
-// User Registration
+// User Registration (POST /users)
 app.post("/users", async (req, res) => {
   const { Username, Password, Email, Birthday } = req.body;
 
-  if (
-    !validateInput(Username) ||
-    !validateInput(Password) ||
-    !validateInput(Email)
-  ) {
+  // Validate Username and Password
+  if (!Username || !Password || !Email) {
     return res
       .status(400)
-      .json({ message: "All fields are required and cannot be empty." });
+      .json({ message: "Required fields: Username, Password, Email" });
+  }
+
+  // Disallow spaces in the Username and Password
+  if (/\s/.test(Username) || /\s/.test(Password)) {
+    return res.status(400).json({
+      message: "Username and Password cannot contain spaces.",
+    });
   }
 
   try {
+    const existingUser = await User.findOne({ Username });
+    if (existingUser) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
+
     const hashedPassword = User.hashPassword(Password);
     const newUser = new User({
-      Username: Username.trim(),
+      Username,
       Password: hashedPassword,
-      Email: Email.trim(),
+      Email,
       Birthday,
     });
 
     await newUser.save();
-    res.status(201).json(newUser);
+    return res.status(201).json(newUser);
   } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ message: "Error creating user", error });
+    return res.status(500).json({ message: "Error creating user", error });
   }
 });
 
-// User Login
+// User Login (POST /login) with JWT Authentication
 app.post("/login", (req, res) => {
   passport.authenticate("local", { session: false }, (error, user, info) => {
     if (error || !user) {
-      console.error("Login error:", error || info);
+      console.log("Login error or invalid credentials:", error || info);
       return res.status(400).json({ message: "Invalid username or password" });
     }
 
-    req.login(user, { session: false }, (loginError) => {
-      if (loginError) {
-        console.error("Login failed:", loginError);
+    req.login(user, { session: false }, (error) => {
+      if (error) {
+        console.error("Login failed:", error);
         return res.status(500).send("Login failed.");
       }
 
       const userPayload = { _id: user._id, Username: user.Username };
       const token = jwt.sign(userPayload, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-        algorithm: "HS256",
+        expiresIn: "7d", // Token expires in 7 days
+        algorithm: "HS256", // HS256 encryption
       });
 
-      res.json({ user: userPayload, token });
+      return res.json({ user: userPayload, token });
     });
   })(req, res);
 });
 
-// Get All Movies
-app.get("/movies", async (req, res) => {
-  try {
-    const movies = await Movie.find();
-    res.json(movies);
-  } catch (error) {
-    console.error("Error fetching movies:", error);
-    res.status(500).json({ message: "Error fetching movies", error });
-  }
-});
+// Middleware to verify the JWT token
+const verifyJWT = (req, res, next) => {
+  const token = req.header("Authorization") && req.header("Authorization").split(" ")[1];
 
-// Add Favorite Movie
+  if (!token) {
+    return res.status(401).json({ message: "Access denied. No token provided." });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // Add user information to request object
+    next();
+  } catch (error) {
+    return res.status(400).json({ message: "Invalid token." });
+  }
+};
+
+// Add Favorite Movie (POST /users/:username/favorites/:movieId) - Protected with JWT
 app.post(
   "/users/:username/favorites/:movieId",
-  passport.authenticate("jwt", { session: false }),
+  verifyJWT,
   async (req, res) => {
     const { username, movieId } = req.params;
 
+    // Check if the movie exists
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found" });
+    }
+
     try {
       const user = await User.findOne({ Username: username });
-      if (!user) return res.status(404).json({ message: "User not found" });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
 
+      // Check if the movie is already in the user's favorites
       if (user.FavoriteMovies.includes(movieId)) {
-        return res.status(400).json({ message: "Movie already in favorites" });
+        return res.status(400).json({ message: "Movie already added to favorites" });
       }
 
       user.FavoriteMovies.push(movieId);
       await user.save();
-      res.status(200).json({ message: "Movie added to favorites", user });
+      return res.status(200).json({ message: "Movie added to favorites", user });
     } catch (error) {
-      console.error("Error adding favorite movie:", error);
-      res.status(500).json({ message: "Error adding favorite movie", error });
+      return res.status(500).json({ message: "Error adding favorite movie", error });
     }
   }
 );
 
-// Remove Favorite Movie
+// Remove Favorite Movie (DELETE /users/:username/favorites/:movieId) - Protected with JWT
 app.delete(
   "/users/:username/favorites/:movieId",
-  passport.authenticate("jwt", { session: false }),
+  verifyJWT,
   async (req, res) => {
     const { username, movieId } = req.params;
-
     try {
       const user = await User.findOne({ Username: username });
-      if (!user) return res.status(404).json({ message: "User not found" });
-
-      const movieIndex = user.FavoriteMovies.indexOf(movieId);
-      if (movieIndex === -1)
-        return res.status(404).json({ message: "Movie not in favorites" });
-
-      user.FavoriteMovies.splice(movieIndex, 1);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      user.FavoriteMovies.pull(movieId);
       await user.save();
-      res.status(200).json({ message: "Movie removed from favorites", user });
+      return res.status(200).json({ message: "Movie removed from favorites", user });
     } catch (error) {
-      console.error("Error removing favorite movie:", error);
-      res.status(500).json({ message: "Error removing favorite movie", error });
+      return res.status(500).json({ message: "Error removing favorite movie", error });
     }
   }
 );
 
-// Start the server
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// Get All Movies (GET /movies) - Protected with JWT
+app.get("/movies", verifyJWT, async (req, res) => {
+  try {
+    const movies = await Movie.find();
+    return res.json(movies);
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching movies", error });
+  }
 });
+
+// Get Movie by Title (GET /movies/:title) - Protected with JWT
+app.get("/movies/:title", verifyJWT, async (req, res) => {
+  const { title } = req.params;
+  try {
+    const movie = await Movie.findOne({ Title: title });
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found" });
+    }
+    return res.json(movie);
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching movie", error });
+  }
+});
+
+// Get Movie by Genre (GET /movies/genre/:genre) - Protected with JWT
+app.get("/movies/genre/:genre", verifyJWT, async (req, res) => {
+  const { genre } = req.params;
+  try {
+    const movies = await Movie.find({ "Genre.Name": genre });
+    if (movies.length === 0) {
+      return res.status(404).json({ message: "No movies found for this genre" });
+    }
+    return res.json(movies);
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching movies by genre", error });
+  }
+});
+
+// Get Movie by Director (GET /movies/director/:director) - Protected with JWT
+app.get("/movies/director/:director", verifyJWT, async (req, res) => {
+  const { director } = req.params;
+  try {
+    const movies = await Movie.find({ "Director.Name": director });
+    if (movies.length === 0) {
+      return res.status(404).json({ message: "No movies found by this director" });
+    }
+    return res.json(movies);
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching movies by director", error });
+  }
+});
+
+// Start the server
+const port = process.env.PORT || 8080;
+app.listen(port, "0.0.0.0", () => {
+  console.log("Listening on Port " + port);
+});
+
