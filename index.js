@@ -30,7 +30,10 @@ require("./passport");
 // Import authentication logic
 let auth = require("./auth")(app);
 
-// Endpoints
+// Root Route (Welcome Message)
+app.get("/", (req, res) => {
+  res.send("Welcome to the movie API!");
+});
 
 // 1. Return a list of ALL movies (No authentication required)
 app.get("/movies", async (req, res) => {
@@ -39,7 +42,7 @@ app.get("/movies", async (req, res) => {
     .catch((err) => res.status(500).send("Error: " + err));
 });
 
-// 2. Return data about a single movie by title
+// 2. Return data about a single movie by title (Authentication required)
 app.get(
   "/movies/:title",
   passport.authenticate("jwt", { session: false }),
@@ -52,7 +55,7 @@ app.get(
   }
 );
 
-// 3. Return data about a genre by name
+// 3. Return data about a genre by name (Authentication required)
 app.get(
   "/genres/:name",
   passport.authenticate("jwt", { session: false }),
@@ -65,7 +68,7 @@ app.get(
   }
 );
 
-// 4. Return data about a director by name
+// 4. Return data about a director by name (Authentication required)
 app.get(
   "/directors/:name",
   passport.authenticate("jwt", { session: false }),
@@ -80,7 +83,7 @@ app.get(
   }
 );
 
-// 5. Allow new users to register (excluded from authentication)
+// 5. Allow new users to register (No authentication required)
 app.post("/users", async (req, res) => {
   await Users.create({
     Username: req.body.Username,
@@ -93,7 +96,7 @@ app.post("/users", async (req, res) => {
     .catch((err) => res.status(500).send("Error: " + err));
 });
 
-// 6. Allow users to update their user info
+// 6. Allow users to update their user info (Authentication required)
 app.put(
   "/users/:username",
   passport.authenticate("jwt", { session: false }),
@@ -115,7 +118,7 @@ app.put(
   }
 );
 
-// 7. Allow users to add a movie to their list of favorites
+// 7. Allow users to add a movie to their list of favorites (Authentication required)
 app.post(
   "/users/:username/movies/:movieId",
   passport.authenticate("jwt", { session: false }),
@@ -130,7 +133,7 @@ app.post(
   }
 );
 
-// 8. Allow users to remove a movie from their list of favorites
+// 8. Allow users to remove a movie from their list of favorites (Authentication required)
 app.delete(
   "/users/:username/movies/:movieId",
   passport.authenticate("jwt", { session: false }),
@@ -145,7 +148,7 @@ app.delete(
   }
 );
 
-// 9. Allow existing users to deregister
+// 9. Allow existing users to deregister (Authentication required)
 app.delete(
   "/users/:username",
   passport.authenticate("jwt", { session: false }),
@@ -161,11 +164,6 @@ app.delete(
       .catch((err) => res.status(500).send("Error: " + err));
   }
 );
-
-// Root route
-app.get("/", (req, res) => {
-  res.send("Welcome to the movie API!");
-});
 
 // Start the server
 const port = process.env.PORT || 8080;
