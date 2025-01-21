@@ -54,7 +54,7 @@ app.get(
       .catch((err) => res.status(500).send("Error: " + err));
   }
 );
-
+//
 // 3. Return data about a genre by name (Authentication required)
 app.get(
   "/genres/:name",
